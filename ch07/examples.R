@@ -120,3 +120,50 @@ library(vcd)
 mytable <- xtabs(~Treatment+Improved, data=Arthritis)
 assocstats(mytable)
 summary(assocstats(mytable))
+
+# 7.14
+states<- state.x77[,1:6]
+pairs(states)
+
+cov(states)
+cor(states)
+cor(states, method="kendall")
+cor(states, method="spearman")
+
+x <- states[,c("Population", "Income", "Illiteracy", "HS Grad")]
+y <- states[,c("Life Exp", "Murder")]
+cor(x,y)
+
+
+library(ggm)
+head(states)
+pcor(c(1,5,2,3,6), cov(states))
+
+# 7.15
+cor.test(states[,3], states[,5])
+cor.test(states[,2], states[,3])
+cor.test(states[,3], states[,4])
+cor.test(states[,2], states[,6])
+
+# 7.16
+library(psych)
+corr.test(states, use="complete")
+
+library(quantmod)
+
+# CPI, Swiss, Norway, Sweden, UK, 5000
+tickers = c("CPIAUCSL", "AEXSZUS", "AEXNOUS", "AEXSDUS", "AEXUSUK", "WILL5000INDFC")
+getSymbols(tickers, src="FRED")
+
+ret <- to.monthly(WILL5000INDFC, indexAt='firstof', OHLC=FALSE)
+ret <- na.omit(cbind(CPIAUCSL, ret))
+ret <- na.omit(cbind(AEXSZUS, ret))
+ret <- na.omit(cbind(AEXNOUS, ret))
+ret <- na.omit(cbind(AEXUSUK, ret))
+
+ret <- ret["1980::2018"]
+summary(ret)
+
+corr.test(ret, use="complete")
+print(corr.test(ret, use="complete"), short=FALSE)
+# US/CH and US/GB exchange rate are nearly independent
