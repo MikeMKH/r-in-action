@@ -118,3 +118,29 @@ summary(model)
 
 vif(fit)
 sqrt(vif(fit)) > 2
+
+# 8.4
+library(car)
+states <- as.data.frame(
+  state.x77[,c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+fit <- lm(Murder~Population+Illiteracy+Income+Frost, data=states)
+
+outlierTest(fit)
+
+hat.plot <- function(fit) {
+  p <- length(coefficients(fit))
+  n <- length(fitted(fit))
+  plot(hatvalues(fit), main="Index Plot of Hat Values")
+  abline(h=c(2,3)*p/n, col="red", lty=2)
+  #identify(1:n, hatvalues(fit), names(hatvalues(fit)))
+}
+hat.plot(fit)
+
+cutoff <- 4/(nrow(states)-length(fit$coefficients)-2)
+plot(fit, which=4, cook.levels=cutoff)
+abline(h=cutoff, lty=2, col="red")
+
+avPlots(fit, ask=FALSE, id.method="identify")
+
+influencePlot(fit, id.method="identify", main="Influence Plot",
+              sub="Circle size is proportional to Cook's distance")
