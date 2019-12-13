@@ -144,3 +144,25 @@ avPlots(fit, ask=FALSE, id.method="identify")
 
 influencePlot(fit, id.method="identify", main="Influence Plot",
               sub="Circle size is proportional to Cook's distance")
+
+# 8.5
+library(car)
+summary(powerTransform(states$Murder))
+
+boxTidwell(Murder~Population+Illiteracy,data=states)
+
+fit <- lm(Murder~Population+Illiteracy+Income+Frost, data=states)
+durbinWatsonTest(fit)
+crPlots(fit)
+ncvTest(fit)
+outlierTest(fit)
+spreadLevelPlot(fit)
+
+fit <- lm(I(sqrt(Murder))~Population+Illiteracy+Income+Frost, data=states)
+durbinWatsonTest(fit)
+crPlots(fit)
+ncvTest(fit)
+outlierTest(fit)
+spreadLevelPlot(fit)
+
+spreadLevelPlot(Population+Illiteracy+Income+Frost~Murder,data=states)
