@@ -166,3 +166,27 @@ outlierTest(fit)
 spreadLevelPlot(fit)
 
 spreadLevelPlot(Population+Illiteracy+Income+Frost~Murder,data=states)
+
+# 8.6
+states <- as.data.frame(
+  state.x77[,c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+
+fit1 <- lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+fit2 <- lm(Murder ~ Population + Illiteracy, data=states)
+
+anova(fit2, fit1)
+AIC(fit1, fit2)
+
+library(MASS)
+fit <- lm(Murder ~ ., data=states)
+stepAIC(fit, direction = "backward")
+stepAIC(fit, direction = "both")
+
+library(leaps)
+model <- regsubsets(Murder ~ ., data=states, nbest=4)
+plot(model, scale="adjr2")
+
+library(car)
+subsets(model, statistic="cp",
+        main="Cp Plot for All Subsets Regression", legend=FALSE)
+abline(1,1,lty=2,col="red")
