@@ -190,3 +190,62 @@ library(car)
 subsets(model, statistic="cp",
         main="Cp Plot for All Subsets Regression", legend=FALSE)
 abline(1,1,lty=2,col="red")
+
+# 8.7
+shrinkage <- function(fit, k=10){
+  require(bootstrap)
+  
+  theta.fit <- function(x,y){lsfit(x,y)}
+  theta.predict <- function(fit,x){cbind(1,x)%*%fit$coef}
+  
+  x <- fit$model[,2:ncol(fit$model)]
+  y <- fit$model[,1]
+  
+  results <- crossval(x, y, theta.fit, theta.predict, ngroup=k)
+  r2 <- cor(y, fit$fitted.values)^2
+  r2cv <- cor(y, results$cv.fit)^2
+  cat("Original R-square =", r2, "\n")
+  cat(k, "Fold Cross-Validated R-square =", r2cv, "\n")
+  cat("Change =", r2-r2cv, "\n")
+}
+
+states <- as.data.frame(
+  state.x77[,c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+fit1 <- lm(Murder ~ Population + Illiteracy, data=states)
+fit2 <- lm(Murder ~ Population + Income + Illiteracy + Frost, data=states)
+shrinkage(fit1)
+shrinkage(fit2)
+
+zstates <- as.data.frame(scale(states))
+zfit <- lm(Murder~Population + Income + Illiteracy + Frost, data=zstates)
+coef(zfit)
+
+relweights <- function(fit,...){
+  R <- cor(fit$model)
+  nvar <- ncol(R)
+  rxx <- R[2:nvar, 2:nvar]
+  rxy <- R[2:nvar, 1]
+  svd <- eigen(rxx)
+  evec <- svd$vectors
+  ev <- svd$values
+  delta <- diag(sqrt(ev))
+  lambda <- evec %*% delta %*% t(evec)
+  lambdasq <- lambda ^ 2
+  beta <- solve(lambda) %*% rxy
+  rsquare <- colSums(beta ^ 2)
+  rawwgt <- lambdasq %*% beta ^ 2
+  import <- (rawwgt / rsquare) * 100
+  import <- as.data.frame(import)
+  row.names(import) <- names(fit$model[2:nvar])
+  names(import) <- "Weights"
+  import <- import[order(import),1, drop=FALSE]
+  dotchart(import$Weights, labels=row.names(import),
+           xlab="% of R-Square", pch=19,
+           main="Relative Importance of Predictor Variables",
+           sub=paste("Total R-Square=", round(rsquare, digits=3)),
+           ...)
+  return(import)
+}
+
+fit <- lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+relweights(fit, col="blue")
