@@ -31,3 +31,29 @@ qqPlot(lm(response ~ trt, data=cholesterol), simulate=TRUE,
 bartlett.test(response ~ trt, data=cholesterol)
 fligner.test(response ~ trt, data=cholesterol)
 outlierTest(fit)
+
+# 9.4
+data(litter, package="multcomp")
+attach(litter)
+
+table(dose)
+aggregate(weight, by=list(dose), FUN=mean)
+
+fit <- aov(weight ~ gesttime + dose)
+summary(fit)
+
+library(effects)
+effect("dose", fit)
+
+library(multcomp)
+comp <- rbind("none to dose" = c(3, -1, -1, -1))
+summary(glht(fit, linfct=mcp(dose=comp)))
+
+fit2 <- aov(weight ~ gesttime * dose)
+summary(fit2)
+
+library(HH)
+ancova(weight ~ gesttime + dose, data=litter) # need to give data
+ancova(weight ~ gesttime * dose, data=litter) # need to give data
+
+detach(litter)
