@@ -84,3 +84,29 @@ library(HH)
 interaction2wt(len ~ supp * dose)
 
 detach(ToothGrowth)
+
+# 9.6
+summary(CO2)
+pairs(CO2)
+
+CO2$conc <- factor(CO2$conc)
+chilled <- subset(CO2, Treatment=="chilled")
+summary(chilled)
+
+fit <- aov(uptake ~ conc*Type + Error(Plant/(conc)), chilled)
+summary(fit)
+
+par(las=2)
+par(mar=c(10,4,4,2))
+with(chilled,
+     interaction.plot(
+       conc, Type, uptake,
+       type="b", col=c("red","blue"), pch=c(16,18),
+       main="Interaction Plot for Plant Type and Concentration"))
+boxplot(uptake ~ Type*conc, data=chilled, col=(c("gold", "green")),
+         main="Chilled Quebec and Mississippi Plants",
+         ylab="Carbon dioxide uptake rate (umol/m^2 sec)")
+
+library(nlme)
+fit2 <- gls(uptake ~ conc*Type, data=chilled)
+summary(fit2)
