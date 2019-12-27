@@ -110,3 +110,37 @@ boxplot(uptake ~ Type*conc, data=chilled, col=(c("gold", "green")),
 library(nlme)
 fit2 <- gls(uptake ~ conc*Type, data=chilled)
 summary(fit2)
+
+# 9.7
+library(MASS)
+
+attach(UScereal)
+summary(UScereal)
+pairs(UScereal)
+
+shelf <- factor(shelf)
+y <- cbind(calories, sugars, fat, vitamins)
+aggregate(y, by=list(shelf), FUN=mean)
+cov(y)
+
+fit <- manova(y ~ shelf)
+summary(fit)
+summary.aov(fit)
+
+center <- colMeans(y)
+n <- nrow(y)
+p <- ncol(y)
+cov <- cov(y)
+d <- mahalanobis(y, center, cov)
+coord <- qqplot(qchisq(ppoints(n), df=p), d, ylab="Mahalanobis D2",
+                main="Q-Q Plot Assessing Multivariate Normality")
+abline(a=0, b=1)
+# identify(coord$x, coord$y, labels=row.names(UScereal))
+
+y <- cbind(calories, sugars, fat)
+
+library(mvoutlier)
+(aq.plot(y))
+
+library(rrcov)
+Wilks.test(y, shelf, method="mcd") # takes awhile
