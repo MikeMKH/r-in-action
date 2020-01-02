@@ -144,3 +144,36 @@ library(mvoutlier)
 
 library(rrcov)
 Wilks.test(y, shelf, method="mcd") # takes awhile
+
+# 9.8
+library(multcomp)
+summary(cholesterol)
+pairs(cholesterol)
+levels(cholesterol$trt)
+
+fit.aov <- aov(response ~ trt, data=cholesterol)
+summary(fit.aov)
+
+fit.lm <- lm(response ~ trt, data=cholesterol)
+summary(fit.lm)
+contrasts(cholesterol$trt)
+
+(contrasts(cholesterol$trt) <- contr.helmert(5))
+fit.lm.1 <- lm(response ~ trt, data=cholesterol, contrasts="contr.helmert")
+summary(fit.lm.1)
+
+(contrasts(cholesterol$trt) <- contr.poly(5))
+fit.lm.2 <- lm(response ~ trt, data=cholesterol, contrasts="contr.poly")
+summary(fit.lm.2)
+
+(contrasts(cholesterol$trt) <- contr.sum(5))
+fit.lm.3 <- lm(response ~ trt, data=cholesterol, contrasts="contr.sum")
+summary(fit.lm.3)
+
+(contrasts(cholesterol$trt) <- contr.treatment(5))
+fit.lm.4 <- lm(response ~ trt, data=cholesterol, contrasts="contr.treatment")
+summary(fit.lm.4)
+
+(contrasts(cholesterol$trt) <- contr.SAS(5))
+fit.lm.5 <- lm(response ~ trt, data=cholesterol, contrasts="contr.SAS")
+summary(fit.lm.5)
