@@ -70,3 +70,45 @@ covariance(kt)
 statistic(kt, type = "standardized")
 statistic(kt)
 pvalue(kt)
+
+# 12.3
+library(lmPerm)
+set.seed(1234)
+summary(women)
+summary(lm(weight~height, data=women))
+
+fit <- lmp(weight~height, data=women, perm="Prob")
+summary(fit)
+
+summary(lm(weight~height + I(height^2), data=women))
+fit2 <- lmp(weight~height + I(height^2), data=women, perm="Prob")
+summary(fit2)
+
+states <- as.data.frame(state.x77)
+summary(states)
+summary(lm(Murder~Population+Illiteracy+Income+Frost, data=states))
+fit <- lmp(Murder~Population+Illiteracy+Income+Frost,
+           data=states, perm="Prob")
+summary(fit)
+
+library(lmPerm)
+library(multcomp)
+set.seed(1234)
+summary(cholesterol)
+summary(aov(response~trt, data=cholesterol))
+fit <- aovp(response~trt, data=cholesterol, perm="Prob")
+anova(fit)
+
+library(lmPerm)
+set.seed(1234)
+summary(litter)
+summary(aov(weight ~ gesttime + dose, data=litter))
+fit <- aovp(weight ~ gesttime + dose, data=litter, perm="Prob")
+anova(fit)
+
+library(lmPerm)
+set.seed(1234)
+summary(ToothGrowth)
+summary(aov(len~supp*dose, data=ToothGrowth))
+fit <- aovp(len~supp*dose, data=ToothGrowth, perm="Prob")
+anova(fit)
