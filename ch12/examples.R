@@ -121,3 +121,18 @@ t <- 2.262
 
 (ci <- c(X.bar - t*(s/sqrt(n)),
          X.bar + t*(s/sqrt(n))))
+
+# 12.6
+library(boot)
+rsq <- function(formula, data, indices) {
+  d <- data[indices,]
+  fit <- lm(formula, data=d)
+  return(summary(fit)$r.square)
+}
+
+set.seed(1234)
+summary(mtcars)
+(results <- boot(formula=mpg~wt+disp, data=mtcars, statistic=rsq, R=1000))
+plot(results)
+
+boot.ci(results, type=c("perc", "bca"))
