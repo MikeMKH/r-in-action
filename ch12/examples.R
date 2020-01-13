@@ -112,3 +112,12 @@ summary(ToothGrowth)
 summary(aov(len~supp*dose, data=ToothGrowth))
 fit <- aovp(len~supp*dose, data=ToothGrowth, perm="Prob")
 anova(fit)
+
+# 12.5
+n <- 10
+X.bar <- 40
+s <- 5
+t <- 2.262
+
+(ci <- c(X.bar - t*(s/sqrt(n)),
+         X.bar + t*(s/sqrt(n))))
