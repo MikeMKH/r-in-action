@@ -132,7 +132,23 @@ rsq <- function(formula, data, indices) {
 
 set.seed(1234)
 summary(mtcars)
-(results <- boot(formula=mpg~wt+disp, data=mtcars, statistic=rsq, R=1000))
+(results <- boot(formula=mpg~wt+disp,
+                 data=mtcars, statistic=rsq, R=1000))
 plot(results)
-
 boot.ci(results, type=c("perc", "bca"))
+
+library(boot)
+bs <- function(formula, data, indices) {
+  d <- data[indices,]
+  fit <- lm(formula, data=d)
+  return(coef(fit))
+}
+
+set.seed(1234)
+summary(mtcars)
+results <- boot(formula=mpg~wt+disp,
+                data=mtcars, statistic=bs, R=1000)
+# 1 = intecept, 2 = wt, 3 = disp
+print(results)
+plot(results, index=2)
+boot.ci(results, type="bca", index=2)
