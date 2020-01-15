@@ -152,3 +152,37 @@ results <- boot(formula=mpg~wt+disp,
 print(results)
 plot(results, index=2)
 boot.ci(results, type="bca", index=2)
+
+library(boot)
+rsq <- function(formula, data, indices) {
+  d <- data[indices,]
+  fit <- lm(formula, data=d)
+  return(summary(fit)$r.square)
+}
+
+(results.10 <- boot(formula=mpg~wt+disp,
+                    data=mtcars, statistic=rsq, R=10))
+(results.100 <- boot(formula=mpg~wt+disp,
+                     data=mtcars, statistic=rsq, R=100))
+(results.1000 <- boot(formula=mpg~wt+disp,
+                      data=mtcars, statistic=rsq, R=1000))
+(results.10000 <- boot(formula=mpg~wt+disp,
+                       data=mtcars, statistic=rsq, R=10000))
+
+results.10$t0 == results.100$t0
+results.100$t0 == results.1000$t0
+results.1000$t0 == results.10000$t0
+
+results.10$t
+
+boot.ci(results.10000, conf=0.90)
+boot.ci(results.10000, conf=0.95)
+boot.ci(results.10000, conf=0.99)
+
+boot.ci(results.10000, conf=0.99, type="norm")
+boot.ci(results.10000, conf=0.99, type="basic")
+boot.ci(results.10000, conf=0.99, type="perc")
+boot.ci(results.10000, conf=0.99, type="bca")
+
+boot.ci(results.10000, conf=c(0.90, 0.95, 0.99),
+        type=c("norm","basic", "perc", "bca"))
