@@ -98,3 +98,39 @@ fit.od <- glm(ynaffair ~ age + yearsmarried + religiousness + rating,
               family=quasibinomial(), data=Affairs)
 pchisq(summary(fit.od)$dispersion * fit$df.residual,
        fit$df.residual, lower = F)
+
+# 13.3
+data(breslow.dat, package="robust")
+names(breslow.dat)
+data <- breslow.dat[c(6,7,8,10)]
+summary(data)
+
+par(mfrow=c(1,2))
+attach(data)
+hist(sumY, breaks=20, xlab="Seizure Count",
+     main="Distribution of Seizures")
+boxplot(sumY ~ Trt, xlab="Treatment", main="Group Comparisons")
+par(opar)
+detach(data)
+
+fit  <- glm(sumY ~ Base+Age+Trt, data=data, family=poisson())
+summary(fit)
+
+coef(fit)
+exp(coef(fit))
+deviance(fit)/df.residual(fit)
+
+library(qcc)
+qcc.overdispersion.test(data$sumY, type="poisson")
+
+fit2 <- glm(sumY ~ Base+Age+Trt, data=data, family=quasipoisson())
+summary(fit2)
+
+library(pscl)
+fit3 <- zeroinfl(sumY ~ Base+Age+Trt, data=data, dist="poisson")
+summary(fit3)
+
+library(robust)
+fit4 <- glmRob(sumY ~ Base+Age+Trt, data=data,
+               family=poisson(), method="cubif")
+summary(fit4)
