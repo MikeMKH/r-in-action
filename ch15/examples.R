@@ -37,3 +37,57 @@ par(mfrow=c(2,1))
 monthplot(AirPassengers, xlab="",  ylab="")
 seasonplot(AirPassengers, year.labels="TRUE", main="")
 par(opar)
+
+# 15.3
+library(forecast)
+summary(nhtemp)
+plot(nhtemp)
+fit.ann <- ets(nhtemp, model="ANN")
+summary(fit.ann)
+
+plot(forecast(fit.ann, 1),
+     xlab="Year", ylab=expression(paste("Temperature {", degree*F, "}")),
+     main="New Haven Annual Mean Temperature")
+accuracy(fit.ann)
+
+fit.aan <- ets(nhtemp, model="AAN")
+summary(fit.aan)
+
+accuracy(fit.ann)
+accuracy(fit.aan)
+
+library(forecast)
+(fit.aaa <- ets(AirPassengers, model="AAA"))
+(pred.aaa <- forecast(fit.aaa, 5))
+plot(pred.aaa, main="Forecast for Air Travel",
+     xlab="Time", ylab="Log(AirPassengers)")
+
+pred.aaa$mean <- exp(pred.aaa$mean)
+pred.aaa$lower <- exp(pred.aaa$lower)
+pred.aaa$upper <- exp(pred.aaa$upper)
+p <- cbind(pred.aaa$mean, pred.aaa$lower, pred.aaa$upper)
+dimnames(p)[[2]]
+p
+
+(fit.mmm <- ets(AirPassengers, model="MMM"))
+(pred.mmm <- forecast(fit.mmm, 5))
+plot(pred.mmm, main="Forecast for Air Travel",
+     xlab="Time", ylab="Log(AirPassengers)")
+
+pred.mmm$mean <- exp(pred.mmm$mean)
+pred.mmm$lower <- exp(pred.mmm$lower)
+pred.mmm$upper <- exp(pred.mmm$upper)
+p <- cbind(pred.mmm$mean, pred.mmm$lower, pred.mmm$upper)
+dimnames(p)[[2]]
+p
+
+accuracy(pred.aaa)
+accuracy(pred.mmm)
+
+library(forecast)
+(fit <- ets(JohnsonJohnson))
+plot(forecast(fit), main="JNJ Forecasts",
+     xlab="Time", ylab="Earnings")
+forecast(fit)
+
+forecast(fit, 40*4)
