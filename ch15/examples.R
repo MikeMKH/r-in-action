@@ -91,3 +91,46 @@ plot(forecast(fit), main="JNJ Forecasts",
 forecast(fit)
 
 forecast(fit, 40*4)
+
+# 15.4
+library(forecast)
+library(tseries)
+plot(Nile)
+ndiffs(Nile)
+
+(Nile.d <- diff(Nile, differences=1))
+plot(Nile.d)
+adf.test(Nile.d)
+
+Acf(Nile.d)
+Pacf(Nile.d)
+
+(fit <- arima(Nile, order=c(0,1,1)))
+accuracy(fit)
+
+(fit.10 <- arima(Nile, order=c(0,1,10)))
+accuracy(fit.10)
+
+qqnorm(fit$residuals)
+qqline(fit$residuals)
+Box.test(fit$residuals, type="Ljung-Box")
+
+forecast(fit, 10)
+plot(forecast(fit, 10), xlab="Year", ylab="Annual Flow")
+
+library(forecast)
+(fit.auto <- auto.arima(Nile))
+forecast(fit.auto, 10)
+
+fit$aic
+accuracy(fit)
+fit.auto$aic
+accuracy(fit.auto)
+
+library(forecast)
+(fit <- auto.arima(sunspots))
+forecast(fit, 3)
+
+library(forecast)
+(fit <- auto.arima(JohnsonJohnson))
+forecast(fit, 3)
