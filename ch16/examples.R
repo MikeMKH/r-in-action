@@ -116,3 +116,31 @@ fit.pam$medoids
 clusplot(fit.pam, main="Bivariate Cluster Plot")
 (ct.pam <- table(wine$Type, fit.pam$clustering))
 randIndex(ct.pam)
+
+# 16.5
+library(fMultivar)
+set.seed(1234)
+df <- as.data.frame(
+  rnorm2d(1000, rho=0.5))
+plot(df, main="Bivariate Normal Distribution with rho=0.5")
+
+wssplot(df)
+library(NbClust)
+nc <- NbClust(df, min.nc=2, max.nc=15, method="kmeans")
+n <- nc$Best.n[1,]
+table(n)
+
+par(mfrow=c(1,1))
+barplot(table(nc$Best.n[1,]), xlab="Number of Clusters", ylab="Number of Criteria",
+        main="Number of Clusters Chosen by Criteria")
+
+library(ggplot2)
+library(cluster)
+fit <- pam(df, k=2)
+df$clustering <- factor(fit$clustering)
+ggplot(data=df, aes(x=V1, y=V2, color=clustering, shape=clustering)) +
+  geom_point() +
+  ggtitle("Clustering of Bivariate Normal Data")
+
+# shows that data is unimodal
+plot(nc$All.index[,4], type="o", ylab="CCC", xlab="Number of clusters", col="blue")
