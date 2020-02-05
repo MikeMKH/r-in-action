@@ -20,3 +20,21 @@ df.train <- df[train,]
 df.validate <- df[-train,]
 table(df.train$class)
 table(df.validate$class)
+
+# 17.2
+fit.glm <- glm(class~., data=df.train, family=binomial())
+summary(fit.glm)
+
+p <- predict(fit.glm, df.validate, type="response")
+glm.pred <- factor(p > 0.5, levels=c(FALSE, TRUE), labels=c("benign", "malignant"))
+(glm.perf <- table(df.validate$class, glm.pred, dnn=c("Actual", "Predicted")))
+
+fit.glm.reduced <- step(fit.glm)
+summary(fit.glm.reduced)
+
+p <- predict(fit.glm.reduced, df.validate, type="response")
+glm.reduced.pred <- factor(p > 0.5, levels=c(FALSE, TRUE), labels=c("benign", "malignant"))
+(glm.reduced.perf <- table(df.validate$class, glm.reduced.pred, dnn=c("Actual", "Predicted")))
+
+glm.perf
+glm.reduced.perf
