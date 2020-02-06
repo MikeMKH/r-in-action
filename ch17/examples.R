@@ -12,7 +12,7 @@ df <- breast[-1]
 df$class <- factor(df$class, levels=c(2,4),
                    labels=c("benign", "malignant"))
 summary(df)
-pairs(df)
+# pairs(df)
 
 set.seed(1234)
 train <- sample(nrow(df), 0.7*nrow(df))
@@ -38,3 +38,39 @@ glm.reduced.pred <- factor(p > 0.5, levels=c(FALSE, TRUE), labels=c("benign", "m
 
 glm.perf
 glm.reduced.perf
+
+# 17.3
+library(rpart)
+set.seed(1234)
+dtree <- rpart(class~., data=df.train, method="class",
+               parms=list(split="information"))
+dtree$cptable
+plotcp(dtree)
+dtree.prune = prune(dtree, cp=0.024)
+
+library(rpart.plot)
+prp(dtree.prune, type=2, extra=104,
+    fallen.leaves=TRUE, main="Decision Tree")
+
+dtree.pred <- predict(dtree, df.validate, type="class")
+(dtree.pref <- table(df.validate$class,
+                     dtree.pred, dnn=c("Actual", "Prediction")))
+
+dtree.prune.pred <- predict(dtree.prune, df.validate, type="class")
+(dtree.prune.pref <- table(df.validate$class,
+                           dtree.prune.pred, dnn=c("Actual", "Prediction")))
+
+dtree.smaller = prune(dtree, cp=0.0125)
+prp(dtree.smaller, type=2, extra=104,
+    fallen.leaves=TRUE, main="Decision Tree")
+
+library(party)
+fit.ctree <- ctree(class~., data=df.train)
+plot(fit.ctree, main="Conditional Inference Tree")
+
+ctree.pred <- predict(fit.ctree, df.validate, type="response")
+(ctree.perf <- table(df.validate$class, ctree.pred,
+                    dnn=c("Actual", "Predicted")))
+
+library(partykit)
+plot(as.party(dtree.prune), main="Decision Tree")
