@@ -74,3 +74,15 @@ ctree.pred <- predict(fit.ctree, df.validate, type="response")
 
 library(partykit)
 plot(as.party(dtree.prune), main="Decision Tree")
+
+# 17.4
+library(randomForest)
+set.seed(1234)
+(fit.forest <- randomForest(class~., data=df.train,
+                           importance=TRUE,
+                           na.action=na.roughfix))
+importance(fit.forest, type=2)
+
+forest.pred <- predict(fit.forest, df.validate)
+(forest.pref <- table(df.validate$class, forest.pred,
+                      dnn=c("Actual", "Predicted")))
