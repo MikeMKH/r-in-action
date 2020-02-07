@@ -86,3 +86,28 @@ importance(fit.forest, type=2)
 forest.pred <- predict(fit.forest, df.validate)
 (forest.pref <- table(df.validate$class, forest.pred,
                       dnn=c("Actual", "Predicted")))
+
+# 17.5
+library(e1071)
+set.seed(1234)
+(fit.svm <- svm(class~., data=df.train))
+
+svm.pred <- predict(fit.svm, na.omit(df.validate))
+(svm.pref <- table(na.omit(df.validate)$class, svm.pred,
+                   dnn=c("Actual", "Predicted")))
+
+set.seed(1234)
+(tuned <- tune.svm(class~., data=df.train,
+                   gamma=10^(-8:1),
+                   cost=10^(-10:10)))
+
+(fit.tuned.svm <- svm(class~., data=df.train,
+                      gamma=tuned$best.parameters$gamma,
+                      cost=tuned$best.parameters$cost))
+
+svm.tuned.pred <- predict(fit.tuned.svm, na.omit(df.validate))
+(svm.tuned.pref <- table(na.omit(df.validate)$class, svm.tuned.pred,
+                   dnn=c("Actual", "Predicted")))
+
+svm.pref
+svm.tuned.pref
