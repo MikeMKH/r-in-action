@@ -111,3 +111,40 @@ svm.tuned.pred <- predict(fit.tuned.svm, na.omit(df.validate))
 
 svm.pref
 svm.tuned.pref
+
+# 17.6
+performance <- function(table, n=2) {
+  if(!all(dim(table) == c(2,2)))
+    stop("Must be 2x2 table")
+  tn = table[1,1]
+  fp = table[1,2]
+  fn = table[2,1]
+  tp = table[2,2]
+  sensitivity = tp/(tp+fn)
+  specificity = tn/(tn+fp)
+  ppp = tp/(tp+fp)
+  npp = tn/(tn+fn)
+  hitrate = (tp+tn)/(tp+tn+fp+fn)
+  
+  result <- "result"
+  result$sensitivity <- sensitivity
+  result$specificity <- specificity
+  result$ppp <- ppp
+  result$npp <- npp
+  result$hitrate <- hitrate
+  return(result)
+}
+
+(glm.performance <- performance(glm.perf))
+(glm.reduced.performance <- performance(glm.reduced.perf))
+(ctree.performance <- performance(ctree.perf))
+(forest.performance <- performance(forest.pref))
+(svm.performance <- performance(svm.pref))
+(svm.tuned.performance <- performance(svm.tuned.pref))
+
+glm.performance$hitrate
+glm.reduced.performance$hitrate
+ctree.performance$hitrate
+forest.performance$hitrate
+svm.performance$hitrate
+svm.tuned.performance$hitrate
