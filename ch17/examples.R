@@ -148,3 +148,13 @@ ctree.performance$hitrate
 forest.performance$hitrate
 svm.performance$hitrate
 svm.tuned.performance$hitrate
+
+# 17.7
+url <- "https://raw.githubusercontent.com/dilanfd/pima-indians-diabetes/master/pima-indians-diabets.csv"
+diabetes <- read.table(url, sep=",", header=FALSE)
+names(diabetes) <- c("npregant", "plasma", "bp", "triceps",
+                     "insulin", "bmi", "pedigree", "age", "class")
+diabetes$class <- factor(diabetes$class, levels=c(0,1),
+                         labels=c("normal", "diabetic"))
+library(rattle)
+rattle()
