@@ -30,3 +30,10 @@ y <- x[which(apply(x, 2, sum)>0)]
 head(y, n=5)
 cor(y)
 cor(sleep, y, use="pairwise.complete.obs")
+
+# 18.6
+options(digits=1)
+cor(na.omit(sleep))
+
+fit <- lm(Dream~Span+Gest, data=na.omit(sleep))
+summary(fit)
