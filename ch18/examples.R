@@ -37,3 +37,16 @@ cor(na.omit(sleep))
 
 fit <- lm(Dream~Span+Gest, data=na.omit(sleep))
 summary(fit)
+
+# 18.7
+library(mice)
+data(sleep, package="VIM")
+summary(sleep)
+
+(imp <- mice(sleep, seed=1234))
+fit <- with(imp, lm(Dream~Span+Gest))
+pooled <- pool(fit)
+summary(pooled)
+
+imp$imp$Dream
+complete(imp, action=3)
