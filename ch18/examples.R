@@ -50,3 +50,6 @@ summary(pooled)
 
 imp$imp$Dream
 complete(imp, action=3)
+
+# 18.8
+cor(sleep, use="pairwise.complete.obs")
