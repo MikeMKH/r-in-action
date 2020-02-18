@@ -52,4 +52,8 @@ imp$imp$Dream
 complete(imp, action=3)
 
 # 18.8
+cor(sleep, use="everything")
+cor(sleep, use="all.obs") # missing observations in cov/cor
+cor(sleep, use="complete.obs")
+cor(sleep, use="na.or.complete")
 cor(sleep, use="pairwise.complete.obs")
